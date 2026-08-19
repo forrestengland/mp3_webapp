@@ -1,0 +1,96 @@
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+
+export default function SongUploadForm() {
+  const [songName, setSongName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [minutes, setMinutes] = useState<string>('');
+  const [seconds, setSeconds] = useState<string>('');
+  const [file, setFile] = useState<File | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!file) {
+      setStatusMessage('Please select an audio file to upload.');
+      return;
+    }
+
+    // Wrap everything into FormData for proper binary boundary streams
+    const formData = new FormData();
+    formData.append('songFile', file);
+    formData.append('songName', songName);
+    formData.append('description', description);
+    formData.append('minutes', minutes);
+    formData.append('seconds', seconds);
+
+    try {
+      setStatusMessage('Uploading...');
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData, // Notice: Do not set Content-Type header manually here!
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatusMessage('Success! Song uploaded and saved.');
+        // Clear out the input values
+        setSongName('');
+        setDescription('');
+        setMinutes('');
+        setSeconds('');
+        setFile(null);
+      } else {
+        setStatusMessage(`Upload failed: ${data.error}`);
+      }
+    } catch (error) {
+      console.error(error);
+      setStatusMessage('An error occurred while connecting to the server.');
+    }
+  };
+
+  return (
+    <div style={{ maxWidth: '400px', margin: '20px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
+      <h2>Upload New Song</h2>
+      <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '12px' }}>
+          <label style={{ display: 'block' }}>Song Title:</label>
+          <input type="text" value={songName} onChange={(e) => setSongName(e.target.value)} required style={{ width: '100%' }} />
+        </div>
+
+        <div style={{ marginBottom: '12px' }}>
+          <label style={{ display: 'block' }}>Description:</label>
+          <textarea value={description} onChange={(e) => setDescription(e.target.value)} style={{ width: '100%' }} />
+        </div>
+
+        <div style={{ marginBottom: '12px', display: 'flex', gap: '10px' }}>
+          <div>
+            <label style={{ display: 'block' }}>Minutes:</label>
+            <input type="number" min="0" value={minutes} onChange={(e) => setMinutes(e.target.value)} required style={{ width: '60px' }} />
+          </div>
+          <div>
+            <label style={{ display: 'block' }}>Seconds:</label>
+            <input type="number" min="0" max="59" value={seconds} onChange={(e) => setSeconds(e.target.value)} required style={{ width: '60px' }} />
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ display: 'block' }}>Audio File (.mp3, .wav):</label>
+          <input type="file" accept="audio/*" onChange={handleFileChange} required />
+        </div>
+
+        <button type="submit" style={{ padding: '8px 16px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          Upload Song
+        </button>
+      </form>
+
+      {statusMessage && <p style={{ marginTop: '12px', fontWeight: 'bold' }}>{statusMessage}</p>}
+    </div>
+  );
+}
