@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import './App.css'
 import SongUploadForm from './SongUploadForm'
+import SongList from './SongList'
 
 interface ApiResponse {
     message: string;
@@ -28,8 +29,11 @@ function App() {
     if (loading) return <p>Loading data from backend...</p>;
 
     return (
-	    <><p>Backend says: {data?.message}</p>
-	    <SongUploadForm /></>
+	    <>
+	    <p>Backend says: {data?.message}</p>
+	    <SongUploadForm />
+	    <SongList />
+	    </>
     );
 }
 

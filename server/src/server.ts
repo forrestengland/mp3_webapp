@@ -41,6 +41,7 @@ const app = express();
 	       credentials: true})); */
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true}));
+app.use('/api/mp3', express.static('/var/www/mp3'));
 // app.use('/images', express.static(path.join(__dirname, 'images')));
 // app.use('/styles', express.static(path.join(__dirname, 'styles')));
 
@@ -86,6 +87,23 @@ RETURNING *`;
 		 res.status(500).json({ error: 'internal server error' });
 	     }
 	 });
+
+// Fetch all songs from the database
+app.get('/api/songs', async (req: Request, res: Response): Promise<void> => {
+  try {
+    // Format the INTERVAL length into a clean MM:SS string structure
+    const sql = `
+      SELECT id, song_name, description, TO_CHAR(length, 'MI:SS') AS duration, filename 
+      FROM songs 
+      ORDER BY id DESC;
+    `;
+    const result = await query(sql);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Fetch songs error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 app.get('/api/data', async (req, res) => {
     try {
