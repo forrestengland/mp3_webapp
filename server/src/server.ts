@@ -1,22 +1,18 @@
-// typescript testing web server
+// mp3 upload web server
 
 import express, { Request, Response } from 'express';
 
 import fs from 'fs';
 import path from 'path';
-// import { fileURLToPath } from 'url'
 
 import cors from 'cors';
 
-//import { query } from './db.js';
-
 import multer from 'multer';
-
-// const __filename: string = fileURLToPath(import.meta.url);
-// const __dirname: string = path.dirname(__filename);
 
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
+
+import * as musicMetadata from 'music-metadata';
 
 const PORT = 3003;
 
@@ -35,15 +31,9 @@ export const query = (text: string, params?: any[]) => {
 };
 
 const app = express();
-
-/*app.use(cors({ origin: 'http://localhost:5173',
-	       methods: ['GET', 'POST', 'PUT', 'DELETE'],
-	       credentials: true})); */
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true}));
 app.use('/api/mp3', express.static('/var/www/mp3'));
-// app.use('/images', express.static(path.join(__dirname, 'images')));
-// app.use('/styles', express.static(path.join(__dirname, 'styles')));
 
 const UPLOAD_DIR = '/var/www/mp3';
 
@@ -70,7 +60,17 @@ app.post('/api/upload', upload.single('songFile'),
 		 }
 
 		 const filename = req.file.filename;
-		 const lengthInterval = `${minutes || 0} minutes ${seconds || 0} seconds`;
+		 const filePath = req.file.path;
+
+		 const metadata = await musicMetadata.parseFile(filePath);
+		 const totalSeconds = metadata.format.duration;
+
+		 if (!totalSeconds) {
+		     res.status(400).json({ error: 'Could not calculate the duration' })
+		     return;
+		 }
+		 
+		 const lengthInterval = `${Math.floor(totalSeconds)} seconds`;
 
 		 const sql = `insert into songs (song_name, description, length, filename)
 values ($1, $2, $3, $4)

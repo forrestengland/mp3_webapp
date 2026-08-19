@@ -7,8 +7,6 @@ interface SongUploadFormProps {
 export default function SongUploadForm({ onUploadSuccess }: SongUploadFormProps) {
   const [songName, setSongName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [minutes, setMinutes] = useState<string>('');
-  const [seconds, setSeconds] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   const [statusMessage, setStatusMessage] = useState<string>('');
 
@@ -30,8 +28,6 @@ export default function SongUploadForm({ onUploadSuccess }: SongUploadFormProps)
     formData.append('songFile', file);
     formData.append('songName', songName);
     formData.append('description', description);
-    formData.append('minutes', minutes);
-    formData.append('seconds', seconds);
 
     try {
       setStatusMessage('Uploading...');
@@ -47,8 +43,6 @@ export default function SongUploadForm({ onUploadSuccess }: SongUploadFormProps)
         // Clear out the input values
         setSongName('');
         setDescription('');
-        setMinutes('');
-        setSeconds('');
           setFile(null);
 
 	  onUploadSuccess();
@@ -76,14 +70,6 @@ export default function SongUploadForm({ onUploadSuccess }: SongUploadFormProps)
         </div>
 
         <div style={{ marginBottom: '12px', display: 'flex', gap: '10px' }}>
-          <div>
-            <label style={{ display: 'block' }}>Minutes:</label>
-            <input type="number" min="0" value={minutes} onChange={(e) => setMinutes(e.target.value)} required style={{ width: '60px' }} />
-          </div>
-          <div>
-            <label style={{ display: 'block' }}>Seconds:</label>
-            <input type="number" min="0" max="59" value={seconds} onChange={(e) => setSeconds(e.target.value)} required style={{ width: '60px' }} />
-          </div>
         </div>
 
         <div style={{ marginBottom: '16px' }}>
