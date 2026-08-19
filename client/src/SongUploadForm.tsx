@@ -1,6 +1,10 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 
-export default function SongUploadForm() {
+interface SongUploadFormProps {
+    onUploadSuccess: () => void;
+}
+
+export default function SongUploadForm({ onUploadSuccess }: SongUploadFormProps) {
   const [songName, setSongName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [minutes, setMinutes] = useState<string>('');
@@ -45,7 +49,9 @@ export default function SongUploadForm() {
         setDescription('');
         setMinutes('');
         setSeconds('');
-        setFile(null);
+          setFile(null);
+
+	  onUploadSuccess();
       } else {
         setStatusMessage(`Upload failed: ${data.error}`);
       }

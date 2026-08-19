@@ -13,6 +13,12 @@ function App() {
     const [data, setData] = useState<ApiResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
+    const [refreshTrigger, setRefreshTrigger] = useState<boolean>(false);
+
+    const triggerRefresh = () => {
+	setRefreshTrigger(prev => !prev);
+    };
+
     useEffect(() => {
 	fetch('/api/data')
 	    .then((res) => res.json())
@@ -31,8 +37,8 @@ function App() {
     return (
 	    <>
 	    <p>Backend says: {data?.message}</p>
-	    <SongUploadForm />
-	    <SongList />
+	    <SongUploadForm onUploadSuccess={triggerRefresh}/>
+	    <SongList refreshTrigger={refreshTrigger} />
 	    </>
     );
 }

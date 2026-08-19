@@ -9,7 +9,11 @@ interface Song {
   filename: string;
 }
 
-export default function SongList() {
+interface SongListProps {
+    refreshTrigger: boolean;
+}
+
+export default function SongList({ refreshTrigger }: SongListProps) {
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -32,7 +36,7 @@ export default function SongList() {
 
   useEffect(() => {
     fetchSongs();
-  }, []);
+  }, [refreshTrigger]);
 
   if (loading) return <p style={{ textAlign: 'center' }}>Loading tracks...</p>;
   if (error) return <p style={{ color: 'red', textAlign: 'center' }}>Error: {error}</p>;
