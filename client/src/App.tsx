@@ -58,7 +58,7 @@ function App() {
 	</nav>
 
 	    <Routes>
-	    <Route path="/" element={<SongList refreshTrigger={refreshTrigger} />} />
+	      <Route path="/" element={<SongList refreshTrigger={refreshTrigger} isAuthenticated={isAuthenticated} />} />
 	    <Route path="/login" element={<LoginForm onLoginSuccess={onLogin}/>} />
 	    <Route path="/logout" element={<Logout onLogoutSuccess={onLogout}/>} />	    
 	    <Route path="/upload" element={<SongUploadForm onUploadSuccess={triggerRefresh}/>} />

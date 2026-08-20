@@ -10,7 +10,8 @@ interface Song {
 }
 
 interface SongListProps {
-    refreshTrigger: boolean;
+  refreshTrigger: boolean;
+  isAuthenticated: boolean;
 }
 
 export default function SongList({ refreshTrigger }: SongListProps) {
@@ -121,6 +122,8 @@ export default function SongList({ refreshTrigger }: SongListProps) {
     <small style={{ display: 'block', marginTop: '8px', color: '#888', fontSize: '0.8em' }}>
       File: {song.filename}
     </small>
+
+
   </div>
 ))}
         </div>
