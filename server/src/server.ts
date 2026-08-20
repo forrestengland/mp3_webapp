@@ -14,6 +14,8 @@ import dotenv from 'dotenv';
 
 import * as musicMetadata from 'music-metadata';
 
+import crypto from 'crypto';
+
 const PORT = 3003;
 
 dotenv.config();
@@ -25,6 +27,39 @@ const pool = new Pool({
     password: process.env.DB_PASSWORD,
     port: 5432
 });
+
+const sessions = {};
+
+const SECRET_PASSWORD = process.env.LOGIN_SECRET_KEY;
+
+function parseCookies(cookieHeader) {
+
+    const cookies = {};
+
+    if (!cookieHeader) return cookies;
+
+    cookieHeader.split(';').forEach(cookie => {
+	const [name, ...rest] = cookie.split('=');
+	if (name) {
+	    cookies[name.trim()] = rest.join('=').trim();
+	}
+    });
+    return cookies;
+}
+
+// check if the user is logged in, return the session id or false if they aren't logged in
+function requireAuthentication(req) {
+
+    const cookies = parseCookies(req.headers.cookie);
+    const sessionId = cookies.session_id;
+    const userSession = sessions[sessionId]; // undefined if not logged in
+	    
+    if (!userSession) {
+	return false;
+    } else {
+	return sessionId;
+    }
+}
 
 export const query = (text: string, params?: any[]) => {
     return pool.query(text, params);
@@ -53,15 +88,19 @@ app.post('/api/login', async(req: Request, res: Response): Promise<void> => {
 
     const { password } = req.body;
 
-    if (password === 'LetMeIn!') {
-	res.status(201).json({
+    if (password === SECRET_PASSWORD) {
+
+	const newSessionId = crypto.randomBytes(16).toString('hex');
+	sessions[newSessionId] = { username: 'admin' };
+	
+	res.status(201).set({'Set-Cookie': `session_id=${newSessionId}; Path=/; httpOnly`}).json({
 	    message: 'login success',
-	    ok: 1
+	    success: true
 	});
     } else {
-	res.status(201).json({
-	    message: 'login failure',
-	    ok: 0
+	res.status(401).json({
+	    message: 'login failure - invalid password',
+	    success: false
 	});
     }
 });

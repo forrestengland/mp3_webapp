@@ -29,12 +29,17 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
 	const data = await response.json();
 
-	if (response.ok) {
+	if (data.success) {
 
 	  setStatusMessage('Success! You are now logged in');
 	  setPassword('');
 	  
 	  onLoginSuccess();
+	  
+	} else {
+	  
+	  setStatusMessage('Invalid password. try again');
+	  
 	}
 	
       } catch (error) {
