@@ -5,6 +5,7 @@ import './App.css'
 import SongUploadForm from './SongUploadForm'
 import SongList from './SongList'
 import LoginForm from './LoginForm'
+import Logout from './Logout'
 
 interface ApiResponse {
     message: string;
@@ -23,8 +24,12 @@ function App() {
 	setRefreshTrigger(prev => !prev);
     };
 
-    const setAuthenticatedTrue = () => {
+    const onLogin = () => {
 	setIsAuthenticated(true);
+    }
+
+    const onLogout = () => {
+	setIsAuthenticated(false);
     }
 
     useEffect(() => {
@@ -45,17 +50,16 @@ function App() {
     return (
 	    <BrowserRouter>
 
-	    <p>Backend says: {data?.message}</p>
-
 	    <nav>
 	    <Link to="/">Songs</Link>
-	    <Link to="/login">Login</Link>
+	    {!isAuthenticated ? <Link to="/login">Login</Link> : <Link to="/logout">Logout</Link>}
 	    <Link to="/upload">Upload</Link>
 	    </nav>
 
 	    <Routes>
 	    <Route path="/" element={<SongList refreshTrigger={refreshTrigger} />} />
-	    <Route path="/login" element={<LoginForm onLoginSuccess={setAuthenticatedTrue}/>} />
+	    <Route path="/login" element={<LoginForm onLoginSuccess={onLogin}/>} />
+	    <Route path="/logout" element={<Logout onLogoutSuccess={onLogout}/>} />	    
 	    <Route path="/upload" element={<SongUploadForm onUploadSuccess={triggerRefresh}/>} />
 	    </Routes>
 	

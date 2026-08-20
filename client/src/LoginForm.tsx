@@ -8,8 +8,9 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
   const [password, setPassword] = useState<string>('');
   const [statusMessage, setStatusMessage] = useState<string>('');
+  const [loggedIn, setLoggedIn] = useState<bool>(false);
 
-    const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
 
       e.preventDefault();
 
@@ -35,6 +36,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 	  setPassword('');
 	  
 	  onLoginSuccess();
+	  setLoggedIn(true);
 	  
 	} else {
 	  
@@ -51,7 +53,8 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   return (
     <div style={{ maxWidth: '400px', margin: '20px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
       <h2>Log In</h2>
-      <form onSubmit={handleSubmit}>
+      {!loggedIn && <>
+		     <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '12px' }}>
           <label style={{ display: 'block' }}>Password:</label>
           <input type="password" onChange={(e) => setPassword(e.target.value)} required style={{ width: '100%' }} />
@@ -61,7 +64,8 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           Log In
         </button>
       </form>
-
+		   </>}
+		     
       {statusMessage && <p style={{ marginTop: '12px', fontWeight: 'bold' }}>{statusMessage}</p>}
     </div>
   );

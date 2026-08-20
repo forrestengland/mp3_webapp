@@ -105,6 +105,34 @@ app.post('/api/login', async(req: Request, res: Response): Promise<void> => {
     }
 });
 
+// logout api endpoint
+app.post('/api/logout', async(req: Request, res: Response): Promise<void> => {
+
+    const cookies = parseCookies(req.headers.cookie);
+    const sessionId = cookies.session_id;
+    const userSession = sessions[sessionId]; // undefined if not logged in
+
+    sessions[sessionId] = null;
+
+    // Clear cookie by setting its expiration date to the past
+  /*  res.writeHead(302, {
+	'Set-Cookie': 'session_id=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly',
+	'Location': '/login'
+    }); */
+//    res.send();
+
+    res.clearCookie('connect.sid', {
+	path: '/',
+	httpOnly: true,
+	secure: false
+    })
+	
+    res.json({
+	message: 'logout success',
+	success: true
+    });
+});
+
 // upload api endpoint
 app.post('/api/upload', upload.single('songFile'),
 	 async (req: Request, res: Response): Promise<void> => {
