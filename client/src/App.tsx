@@ -32,6 +32,7 @@ function App() {
 	setIsAuthenticated(false);
     }
 
+    // do something after page is rendered
     useEffect(() => {
 	fetch('/api/data')
 	    .then((res) => res.json())
