@@ -87,6 +87,27 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// delete song
+app.post('/api/delete', async(req: Request, res: Response): Promise<void> => {
+
+  try {
+    
+    const { id } = req.body;
+    
+    const sql = `delete from songs where id = $1`;
+    const values = [id];
+    const result = await query(sql, values);
+
+    res.status(201).json({
+      message: 'song delete success',
+      success: true
+    });
+  } catch (error) {
+    console.error('upload handler error:', error);
+    res.status(500).json({ error: 'internal server error' });
+  }
+});
+
 // login api endpoint
 app.post('/api/login', async(req: Request, res: Response): Promise<void> => {
 

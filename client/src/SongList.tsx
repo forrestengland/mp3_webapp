@@ -14,7 +14,7 @@ interface SongListProps {
   isAuthenticated: boolean;
 }
 
-export default function SongList({ refreshTrigger }: SongListProps) {
+export default function SongList({ refreshTrigger, isAuthenticated }: SongListProps) {
 
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -57,6 +57,25 @@ export default function SongList({ refreshTrigger }: SongListProps) {
     } else {
       setIsPlaying(false);
     }
+  };
+
+  const deleteClicked = async (id: number) => {
+    try {
+      const response = await fetch('/api/delete', {
+	method: 'POST',
+	headers: {
+	  'Content-Type': 'application/json'
+	},
+	body: JSON.stringify({id: id})
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete song from server');
+      }
+      const data = await response.json();
+      fetchSongs();
+    } catch (err: any) {
+      setError(err.message || 'An error occurred deleting the song.');
+    }    
   };
 
   useEffect(() => {
@@ -123,6 +142,7 @@ export default function SongList({ refreshTrigger }: SongListProps) {
       File: {song.filename}
     </small>
 
+		{isAuthenticated === true && <button onClick={() => {deleteClicked(song.id)}}>Delete</button>}
 
   </div>
 ))}
