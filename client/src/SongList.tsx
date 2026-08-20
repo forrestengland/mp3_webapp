@@ -45,7 +45,8 @@ export default function SongList({ refreshTrigger }: SongListProps) {
     <div style={{ maxWidth: '600px', margin: '20px auto', padding: '20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <h2>Available Tracks</h2>
-        <button onClick={fetchSongs} style={{ padding: '6px 12px', cursor: 'pointer' }}>Refresh</button>
+	
+	
       </div>
 
       {songs.length === 0 ? (
