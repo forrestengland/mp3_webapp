@@ -4,10 +4,10 @@ interface LogoutProps {
     onLogoutSuccess: () => void;
 }
 
-export default function Logout({ onLogoutSuccess }: LogoutFormProps) {
+export default function Logout({ onLogoutSuccess }: LogoutProps) {
 
   const [statusMessage, setStatusMessage] = useState<string>('');
-  const [loggedOut, setLoggedOut] = useState<bool>(false);
+  const [loggedOut, setLoggedOut] = useState<boolean>(false);
 
   const logoutClicked = async (event: React.MouseEvent<HTMLButtonElement>) => {
 

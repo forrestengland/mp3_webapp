@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
-const ProtectedRoute = ({ isAuthenticated }) => {
+const ProtectedRoute = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
   // If not logged in, redirect to the login page
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

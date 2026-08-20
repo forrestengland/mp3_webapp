@@ -8,7 +8,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
   const [password, setPassword] = useState<string>('');
   const [statusMessage, setStatusMessage] = useState<string>('');
-  const [loggedIn, setLoggedIn] = useState<bool>(false);
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   const handleSubmit = async (e: FormEvent) => {
 

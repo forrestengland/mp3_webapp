@@ -28,13 +28,17 @@ const pool = new Pool({
     port: 5432
 });
 
-const sessions = {};
+export interface Session {
+  username: string;
+}
+
+const sessions: Record<string, Session> = {};
 
 const SECRET_PASSWORD = process.env.LOGIN_SECRET_KEY;
 
-function parseCookies(cookieHeader) {
+function parseCookies(cookieHeader: string) {
 
-    const cookies = {};
+  const cookies: Record<string, string> = {};
 
     if (!cookieHeader) return cookies;
 
@@ -48,9 +52,9 @@ function parseCookies(cookieHeader) {
 }
 
 // check if the user is logged in, return the session id or false if they aren't logged in
-function requireAuthentication(req) {
+function requireAuthentication(req: Request) {
 
-    const cookies = parseCookies(req.headers.cookie);
+    const cookies = parseCookies(req.headers.cookie || '');
     const sessionId = cookies.session_id;
     const userSession = sessions[sessionId]; // undefined if not logged in
 	    
@@ -108,11 +112,12 @@ app.post('/api/login', async(req: Request, res: Response): Promise<void> => {
 // logout api endpoint
 app.post('/api/logout', async(req: Request, res: Response): Promise<void> => {
 
-    const cookies = parseCookies(req.headers.cookie);
+    const cookies = parseCookies(req.headers.cookie || '');
     const sessionId = cookies.session_id;
     const userSession = sessions[sessionId]; // undefined if not logged in
 
-    sessions[sessionId] = null;
+  //    sessions[sessionId] = null;
+  delete sessions[sessionId];
 
     res.clearCookie('connect.sid', {
 	path: '/',
