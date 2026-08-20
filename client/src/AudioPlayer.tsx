@@ -10,10 +10,14 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  //  const audioCtx = new AudioContext();
+  // const audioCtx = new AudioContext();
 
   const playingEnded = () => {
     onPlayStateChanged(false);
+  };
+
+  const playClicked = () => {
+    console.log('play clicked');
   };
 
   // start playing when a new file is loaded - works
@@ -22,6 +26,8 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
       audioRef.current.load(); // Forces the player to load the new track
       audioRef.current.play().catch((err) => {
         console.log("Playback interrupted or blocked by browser:", err);
+	// couldn't start playback - override play request
+	//	if (onPlayStateChanged) onPlayStateChanged(false);
       });
     } 
   }, [src]); // Triggers every time this state changes 
@@ -30,8 +36,11 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
   useEffect(() => {
     if (audioRef.current && isPlaying) {
       audioRef.current.load(); // Forces the player to load the new track
+      // TODO - this is called when the page loads, we shouldn't start to play on load
       audioRef.current.play().catch((err) => {
         console.log("Playback interrupted or blocked by browser:", err);
+	// couldn't start playback - override play request - doesn't work
+	//	if (onPlayStateChanged) onPlayStateChanged(false);
       });
     } 
   }, [isPlaying]); // Triggers every time this state changes 
@@ -50,7 +59,9 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
 	  </audio>
 	</div>
 
-    
+      <div>
+	{/*	<button onClick={playClicked}>{isPlaying === true ? "Play" : "Pause"}</button> */}
+      </div>
     </>
   );
 }

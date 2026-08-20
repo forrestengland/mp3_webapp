@@ -55,7 +55,10 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
   };
 
   const playStateChanged = (state: boolean) => {
-    if (state) return; // only play the next song if the play state changed to stopped
+    if (state)  {
+      setIsPlaying(true);
+      return; // only play the next song if the play state changed to stopped
+    }
     if (!songs) return;
     if (playingIndex < songs.length - 1) {
       setPlayingIndex(playingIndex + 1);
