@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 
 import './App.css'
 import SongUploadForm from './SongUploadForm'
@@ -35,11 +36,21 @@ function App() {
     if (loading) return <p>Loading data from backend...</p>;
 
     return (
-	    <>
+	    <BrowserRouter>
+
 	    <p>Backend says: {data?.message}</p>
-	    <SongUploadForm onUploadSuccess={triggerRefresh}/>
-	    <SongList refreshTrigger={refreshTrigger} />
-	    </>
+
+	    <nav>
+	    <Link to="/">Songs</Link>
+	    <Link to="/upload">Upload</Link>
+	    </nav>
+
+	    <Routes>
+	    <Route path="/" element={<SongList refreshTrigger={refreshTrigger} />} />
+	    <Route path="/upload" element={<SongUploadForm onUploadSuccess={triggerRefresh}/>} />
+	    </Routes>
+	
+	    </BrowserRouter>
     );
 }
 
