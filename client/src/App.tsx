@@ -48,13 +48,13 @@ function App() {
     if (loading) return <p>Loading data from backend...</p>;
 
     return (
-	    <BrowserRouter>
+      <BrowserRouter>
 
-	    <nav>
-	    <Link to="/">Songs</Link>
-	    {!isAuthenticated ? <Link to="/login">Login</Link> : <Link to="/logout">Logout</Link>}
-	    <Link to="/upload">Upload</Link>
-	    </nav>
+	<nav>
+	  <Link to="/">Songs</Link>
+	  {!isAuthenticated ? <Link to="/login">Login</Link> : <Link to="/logout">Logout</Link>}
+  	  {isAuthenticated && <Link to="/upload">Upload</Link>}
+	</nav>
 
 	    <Routes>
 	    <Route path="/" element={<SongList refreshTrigger={refreshTrigger} />} />

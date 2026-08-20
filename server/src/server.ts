@@ -114,13 +114,6 @@ app.post('/api/logout', async(req: Request, res: Response): Promise<void> => {
 
     sessions[sessionId] = null;
 
-    // Clear cookie by setting its expiration date to the past
-  /*  res.writeHead(302, {
-	'Set-Cookie': 'session_id=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly',
-	'Location': '/login'
-    }); */
-//    res.send();
-
     res.clearCookie('connect.sid', {
 	path: '/',
 	httpOnly: true,
@@ -133,9 +126,18 @@ app.post('/api/logout', async(req: Request, res: Response): Promise<void> => {
     });
 });
 
+
+
 // upload api endpoint
 app.post('/api/upload', upload.single('songFile'),
+	 
 	 async (req: Request, res: Response): Promise<void> => {
+
+	     if (!requireAuthentication(req)) {
+		 res.status(400).json({ error: 'you are not logged in' });
+		 return;
+	     }
+	     
 	     try {
 		 const {songName, description, minutes, seconds } = req.body;
 
@@ -151,7 +153,7 @@ app.post('/api/upload', upload.single('songFile'),
 		 const totalSeconds = metadata.format.duration;
 
 		 if (!totalSeconds) {
-		     res.status(400).json({ error: 'Could not calculate the duration' })
+		     res.status(400).json({ error: 'Could not calculate the duration' });
 		     return;
 		 }
 		 
