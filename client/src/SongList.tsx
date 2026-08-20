@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 // Define the TypeScript interface for our song object structure
 interface Song {
@@ -19,6 +19,8 @@ export default function SongList({ refreshTrigger }: SongListProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [playingIndex, setPlayingIndex] = useState<number>(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   // Fetch songs from Express API
   const fetchSongs = async () => {
@@ -37,38 +39,67 @@ export default function SongList({ refreshTrigger }: SongListProps) {
   };
 
   const songClicked = (index: number) => {
-    setPlayingIndex(index);
+
+    if (index == playingIndex) {
+      audioRef.current && audioRef.current.play().catch(err => console.log('error playing: ', err));
+    } else {
+      setPlayingIndex(index);
+      if (audioRef.current) audioRef.current.src = '/api/mp3/'+songs[playingIndex].filename;
+    }
+    setIsPlaying(true);
+  };
+
+  const playingEnded = () => {
+    if (!songs) return;
+    if (playingIndex < songs.length - 1) {
+      setPlayingIndex(playingIndex + 1);
+    } else {
+      setIsPlaying(false);
+    }
   };
 
   useEffect(() => {
     fetchSongs();
   }, [refreshTrigger]);
 
+  // play whenever playingIndex changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.load(); // Forces the player to load the new track
+      audioRef.current.play().catch((err) => {
+        console.log("Playback interrupted or blocked by browser:", err);
+      });
+    }
+  }, [playingIndex]); // Triggers every time this state changes
+
   if (loading) return <p style={{ textAlign: 'center' }}>Loading tracks...</p>;
   if (error) return <p style={{ color: 'red', textAlign: 'center' }}>Error: {error}</p>;
 
   return (
+
+    <>
+    {/* AUDIO PLAYER COMPONENT SECTION */}
+	<div style={{ marginTop: '12px' }}>
+	  <audio ref={audioRef} onEnded={playingEnded}
+            controls 
+            src={`/api/mp3/${songs[playingIndex].filename}`} 
+            style={{ width: '100%' }}
+	  >
+             Your browser does not support the audio element.
+	  </audio>
+	</div>
+
+    
     <div style={{ maxWidth: '600px', margin: '20px auto', padding: '20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-
-
-    {/* AUDIO PLAYER COMPONENT SECTION */}
-    <div style={{ marginTop: '12px' }}>
-      <audio 
-        controls 
-        src={`/api/mp3/${songs[playingIndex].filename}`} 
-        style={{ width: '100%' }}
-      >
-        Your browser does not support the audio element.
-      </audio>
-	  
+	
+        <div>
+	  <h2>Available Tracks</h2>
 	</div>
-	
 
-	<h2>Available Tracks</h2>
 	
-	
-      </div>
+    </div>
+
 
       {songs.length === 0 ? (
         <p style={{ fontStyle: 'italic', color: '#666' }}>No songs uploaded yet.</p>
@@ -95,5 +126,6 @@ export default function SongList({ refreshTrigger }: SongListProps) {
         </div>
       )}
     </div>
+    </>
   );
 }
