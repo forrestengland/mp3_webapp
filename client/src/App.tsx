@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import './App.css'
 import SongUploadForm from './SongUploadForm'
 import SongList from './SongList'
+import LoginForm from './LoginForm'
 
 interface ApiResponse {
     message: string;
@@ -16,9 +17,15 @@ function App() {
 
     const [refreshTrigger, setRefreshTrigger] = useState<boolean>(false);
 
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
     const triggerRefresh = () => {
 	setRefreshTrigger(prev => !prev);
     };
+
+    const setAuthenticatedTrue = () => {
+	setIsAuthenticated(true);
+    }
 
     useEffect(() => {
 	fetch('/api/data')
@@ -42,11 +49,13 @@ function App() {
 
 	    <nav>
 	    <Link to="/">Songs</Link>
+	    <Link to="/login">Login</Link>
 	    <Link to="/upload">Upload</Link>
 	    </nav>
 
 	    <Routes>
 	    <Route path="/" element={<SongList refreshTrigger={refreshTrigger} />} />
+	    <Route path="/login" element={<LoginForm onLoginSuccess={setAuthenticatedTrue}/>} />
 	    <Route path="/upload" element={<SongUploadForm onUploadSuccess={triggerRefresh}/>} />
 	    </Routes>
 	

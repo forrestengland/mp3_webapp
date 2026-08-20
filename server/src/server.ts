@@ -48,6 +48,24 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// login api endpoint
+app.post('/api/login', async(req: Request, res: Response): Promise<void> => {
+
+    const { password } = req.body;
+
+    if (password === 'LetMeIn!') {
+	res.status(201).json({
+	    message: 'login success',
+	    ok: 1
+	});
+    } else {
+	res.status(201).json({
+	    message: 'login failure',
+	    ok: 0
+	});
+    }
+});
+
 // upload api endpoint
 app.post('/api/upload', upload.single('songFile'),
 	 async (req: Request, res: Response): Promise<void> => {
