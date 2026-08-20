@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 
+import AudioPlayer from './AudioPlayer'
+
 // Define the TypeScript interface for our song object structure
 interface Song {
   id: number;
@@ -20,8 +22,8 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [playingIndex, setPlayingIndex] = useState<number>(0);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  //  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);  
 
   // Fetch songs from Express API
   const fetchSongs = async () => {
@@ -42,15 +44,18 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
   const songClicked = (index: number) => {
 
     if (index == playingIndex) {
-      audioRef.current && audioRef.current.play().catch(err => console.log('error playing: ', err));
+      // play the player
+      //  audioRef.current && audioRef.current.play().catch(err => console.log('error playing: ', err));
+      //      setIsPlaying(true);
     } else {
       setPlayingIndex(index);
-      if (audioRef.current) audioRef.current.src = '/api/mp3/'+songs[playingIndex].filename;
+      //      if (audioRef.current) audioRef.current.src = '/api/mp3/'+songs[playingIndex].filename;
     }
     setIsPlaying(true);
   };
 
-  const playingEnded = () => {
+  const playStateChanged = (state: boolean) => {
+    if (state) return; // only play the next song if the play state changed to stopped
     if (!songs) return;
     if (playingIndex < songs.length - 1) {
       setPlayingIndex(playingIndex + 1);
@@ -83,14 +88,14 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
   }, [refreshTrigger]);
 
   // play whenever playingIndex changes
-  useEffect(() => {
+  /* useEffect(() => {
     if (audioRef.current) {
       audioRef.current.load(); // Forces the player to load the new track
       audioRef.current.play().catch((err) => {
         console.log("Playback interrupted or blocked by browser:", err);
       });
-    }
-  }, [playingIndex]); // Triggers every time this state changes
+    } 
+    }, [playingIndex]); // Triggers every time this state changes */
 
   if (loading) return <p style={{ textAlign: 'center' }}>Loading tracks...</p>;
   if (error) return <p style={{ color: 'red', textAlign: 'center' }}>Error: {error}</p>;
@@ -98,16 +103,8 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
   return (
 
     <>
-    {/* AUDIO PLAYER COMPONENT SECTION */}
-	<div style={{ marginTop: '12px' }}>
-	  <audio ref={audioRef} onEnded={playingEnded}
-            controls 
-            src={`/api/mp3/${songs[playingIndex].filename}`} 
-            style={{ width: '100%' }}
-	  >
-             Your browser does not support the audio element.
-	  </audio>
-	</div>
+
+      <AudioPlayer src={`/api/mp3/${songs[playingIndex].filename}`} isPlaying={isPlaying} onPlayStateChange={playStateChanged}/>
 
     
     <div style={{ maxWidth: '600px', margin: '20px auto', padding: '20px' }}>
