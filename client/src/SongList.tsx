@@ -14,9 +14,11 @@ interface SongListProps {
 }
 
 export default function SongList({ refreshTrigger }: SongListProps) {
+
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
+  const [playingIndex, setPlayingIndex] = useState<number>(0);
 
   // Fetch songs from Express API
   const fetchSongs = async () => {
@@ -34,6 +36,10 @@ export default function SongList({ refreshTrigger }: SongListProps) {
     }
   };
 
+  const songClicked = (index: number) => {
+    setPlayingIndex(index);
+  };
+
   useEffect(() => {
     fetchSongs();
   }, [refreshTrigger]);
@@ -44,7 +50,22 @@ export default function SongList({ refreshTrigger }: SongListProps) {
   return (
     <div style={{ maxWidth: '600px', margin: '20px auto', padding: '20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <h2>Available Tracks</h2>
+
+
+    {/* AUDIO PLAYER COMPONENT SECTION */}
+    <div style={{ marginTop: '12px' }}>
+      <audio 
+        controls 
+        src={`/api/mp3/${songs[playingIndex].filename}`} 
+        style={{ width: '100%' }}
+      >
+        Your browser does not support the audio element.
+      </audio>
+	  
+	</div>
+	
+
+	<h2>Available Tracks</h2>
 	
 	
       </div>
@@ -54,8 +75,9 @@ export default function SongList({ refreshTrigger }: SongListProps) {
       ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
-	      {songs.map((song) => (
-  <div key={song.id} style={{ padding: '16px', border: '1px solid #ddd', borderRadius: '6px', background: '#f9f9f9', marginBottom: '12px' }}>
+	    {songs.map((song, index) => (
+
+	      <div className={index === playingIndex ? "song song-playing" : "song"} onClick={() => {songClicked(index)}} key={song.id} style={{ padding: '16px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '12px' }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
       <strong style={{ fontSize: '1.1em' }}>{song.song_name}</strong>
       <span style={{ color: '#666', fontSize: '0.9em' }}>⏱ {song.duration}</span>
@@ -64,17 +86,6 @@ export default function SongList({ refreshTrigger }: SongListProps) {
     {song.description && (
       <p style={{ margin: '8px 0', color: '#444', fontSize: '0.95em' }}>{song.description}</p>
     )}
-
-    {/* AUDIO PLAYER COMPONENT SECTION */}
-    <div style={{ marginTop: '12px' }}>
-      <audio 
-        controls 
-        src={`/api/mp3/${song.filename}`} 
-        style={{ width: '100%' }}
-      >
-        Your browser does not support the audio element.
-      </audio>
-    </div>
 
     <small style={{ display: 'block', marginTop: '8px', color: '#888', fontSize: '0.8em' }}>
       File: {song.filename}
