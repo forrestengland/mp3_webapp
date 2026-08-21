@@ -27,10 +27,18 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
       return;
     }
 
-    console.log("drawing animation frame");
+    //    console.log("drawing animation frame");
 
     const canvas = canvasRef.current;
-    const ctx = canvasRef.current.getContext('2d');
+    if (!canvas) {
+      console.log("canvasRef.current is null, can't draw visualizer frame");
+      return;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      console.log("canvas context is null, can't draw visualizer");
+    }
 
     // Set internal canvas dimensions to match its display size
     canvas.width = canvas.clientWidth;
@@ -40,34 +48,36 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
     const dataArray = new Uint8Array(bufferLength);    
     
     // 1. Clear the canvas for the new frame
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // 2. Fetch the latest audio data
-    analyserNode.getByteFrequencyData(dataArray);
+      // 2. Fetch the latest audio data
+      analyserNode.getByteFrequencyData(dataArray);
 
-    // 3. Calculate how wide each bar should be based on screen size
-    const barWidth = (canvas.width / bufferLength) * 1.5;
-    let barHeight;
-    let x = 0;
+      // 3. Calculate how wide each bar should be based on screen size
+      const barWidth = (canvas.width / bufferLength) * 1.5;
+      let barHeight;
+      let x = 0;
 
-  // 4. Loop through the audio data array and draw each bar
-    for (let i = 0; i < bufferLength; i++) {
-      // Value is 0-255. Normalize it to fit the canvas height.
-      const percent = dataArray[i] / 255;
-      barHeight = canvas.height * percent;
+      // 4. Loop through the audio data array and draw each bar
+      for (let i = 0; i < bufferLength; i++) {
+	// Value is 0-255. Normalize it to fit the canvas height.
+	const percent = dataArray[i] / 255;
+	barHeight = canvas.height * percent;
 
-      // Optional: Make bars change color based on their height/intensity
-      const r = barHeight + (25 * (i / bufferLength));
-      const g = 250 * (i / bufferLength);
-      const b = 50;
-      ctx.fillStyle = `rgb(${r},${g},${b})`;
+	// Optional: Make bars change color based on their height/intensity
+	const r = barHeight + (25 * (i / bufferLength));
+	const g = 250 * (i / bufferLength);
+	const b = 50;
+	ctx.fillStyle = `rgb(${r},${g},${b})`;
 
-      // Draw the bar (x-coordinate, y-coordinate, width, height)
-      // Subtracting from canvas.height makes the bars grow from the bottom up
-      ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
-
-      // Move to the next bar's starting position
-      x += barWidth;
+	// Draw the bar (x-coordinate, y-coordinate, width, height)
+	// Subtracting from canvas.height makes the bars grow from the bottom up
+	ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+	
+	// Move to the next bar's starting position
+	x += barWidth;
+      }
     }
 
     requestAnimationFrame(animate);
@@ -109,25 +119,30 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
   const playClicked = () => {
     
     setUserPlayRequested(true);
-    
-    audioRef.current.load(); // Forces the player to load the new track
-    audioRef.current.play();
 
-    const sourceNode = audioContext.createMediaElementSource(audioRef.current);
-    // Connect the pipeline: Source -> Analyser -> Speakers (destination)
-    sourceNode.connect(analyserNode);
-    analyserNode.connect(audioContext.destination);
+    if (audioRef.current) {
+      audioRef.current.load(); // Forces the player to load the new track
+      audioRef.current.play();
 
-    animate(); // start the visualizer
+      const sourceNode = audioContext.createMediaElementSource(audioRef.current);
+      // Connect the pipeline: Source -> Analyser -> Speakers (destination)
+      sourceNode.connect(analyserNode);
+      analyserNode.connect(audioContext.destination);
+
+      animate(); // start the visualizer
     
-    console.log('play clicked, playing');
+      console.log('play clicked, playing and visualizing');
+    }
   };
 
   const pauseClicked = () => {
 
     setUserPlayRequested(false);
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
     
-    audioRef.current.pause();
     console.log('pause clicked');
   };
 
