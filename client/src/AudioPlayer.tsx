@@ -1,26 +1,60 @@
+// custom audio player component
+
 import React, { useEffect, useState, useRef } from 'react';
 
 interface AudioPlayerProps {
   src: string;
-  isPlaying: boolean;
-  onPlayStateChanged: (playState: boolean) => void;
 }
 
-export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: AudioPlayerProps) {
+export default function AudioPlayer({ src }: AudioPlayerProps) {
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLMediaElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // keep track of whether the user pressed play which means we can autoplay
   const [userPlayRequested, setUserPlayRequested] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
+  const [contextCreated, setContextCreated] = useState<boolean>(false);
 
-  const audioContext = new AudioContext();
-  const analyserNode = audioContext.createAnalyser();
-  analyserNode.fftSize = 256;
-
+  let audioContext : AudioContext | null = null;
+  let analyserNode : AnalyserNode | null = null;  
   let sourceNode: MediaElementAudioSourceNode | null = null;
+
+  const playAudio = () => {
+
+    console.log('playing audio. ', audioRef.current);
+
+    if (contextCreated === false) {
+
+      audioContext = new AudioContext();
+
+      analyserNode = audioContext.createAnalyser();
+      analyserNode.fftSize = 64;
+
+      if (audioRef.current !== null) {
+	sourceNode = audioContext.createMediaElementSource(audioRef.current);
+      }
+
+      // Connect the pipeline: Source -> Analyser -> Speakers (destination)
+      sourceNode && sourceNode.connect(analyserNode);
+      analyserNode.connect(audioContext.destination);
+
+      setContextCreated(true); // do this once
+
+      console.log('created analyser');
+    } else {
+      console.log('analyser already created, skipping');
+    }
+
+    //    audioContext.resume();
+    audioRef.current && audioRef.current.load();
+    audioRef.current && audioRef.current.play().catch((err) => {
+      console.log("Playback interrupted or blocked by browser when src changed:", err);
+      console.log('load and start play failed');
+      return;
+    });
+  };
 
   const animate = () => {
 
@@ -115,7 +149,7 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
   };
 
   const playingEnded = () => {
-    onPlayStateChanged(false);
+    //    onPlayStateChanged(false);
   };
 
   const playClicked = () => {
@@ -123,22 +157,14 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
     setUserPlayRequested(true);
 
     if (audioRef.current) {
-      
-      audioRef.current.load(); // Forces the player to load the new track
-      audioRef.current.play();
-
-      // only connect the source node once?
-      if (!sourceNode) {
-	sourceNode = audioContext.createMediaElementSource(audioRef.current);
-	// Connect the pipeline: Source -> Analyser -> Speakers (destination)
-	sourceNode.connect(analyserNode);
-	analyserNode.connect(audioContext.destination);
-      }
-      
-      animate(); // start the visualizer
-    
-      console.log('play clicked, playing and visualizing');
+      audioRef.current.load();
+      //      audioRef.current.play();
+      playAudio();
     }
+      
+    animate(); // start the visualizer
+    
+    console.log('play clicked, playing and visualizing');
   };
 
   const pauseClicked = () => {
@@ -151,6 +177,21 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
     
     console.log('pause clicked');
   };
+
+  /*  useEffect(() => {
+
+    // set up the audio context once the page loads and the audio element is available
+    if (audioRef.current) {
+
+      console.log('elements loaded, creating audioContext');
+      
+      //  audioRef.current.load(); // Forces the player to load the new track
+      
+      //      audioRef.current.play();
+
+    }
+
+  }, []); */
 
   // start playing when a new file is loaded
   // user has to start play manually?
@@ -180,11 +221,13 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
 
 	console.log("audio src change. user requested play");
       
-	audioRef.current.play().catch((err) => {
+	/*	audioRef.current.play().catch((err) => {
           console.log("Playback interrupted or blocked by browser when src changed:", err);
 	  console.log('load and start play failed');
 	  return;
-	});
+	  }); */
+	playAudio();
+	
       } else {
 	console.log("user didn't request playback, skipping");
       }
@@ -205,6 +248,7 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
 	    onLoadedMetadata={metadataLoaded}
             onTimeUpdate={currentTimeChanged}
             style={{ width: '100%' }}
+	    controls
 	  >
              Your browser does not support the audio element.
 	  </audio>

@@ -23,7 +23,6 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
   const [error, setError] = useState<string>('');
   const [playingIndex, setPlayingIndex] = useState<number>(0);
   //  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);  
 
   // Fetch songs from Express API
   const fetchSongs = async () => {
@@ -51,21 +50,21 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
       setPlayingIndex(index);
       //      if (audioRef.current) audioRef.current.src = '/api/mp3/'+songs[playingIndex].filename;
     }
-    setIsPlaying(true);
+    //    setIsPlaying(true);
   };
 
-  const playStateChanged = (state: boolean) => {
+  /*  const playStateChanged = (state: boolean) => {
     if (state)  {
-      setIsPlaying(true);
+      //      setIsPlaying(true);
       return; // only play the next song if the play state changed to stopped
     }
     if (!songs) return;
     if (playingIndex < songs.length - 1) {
       setPlayingIndex(playingIndex + 1);
     } else {
-      setIsPlaying(false);
+      //      setIsPlaying(false);
     }
-  };
+    }; */
 
   const deleteClicked = async (id: number) => {
     try {
@@ -107,7 +106,7 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
 
     <>
 
-      <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} isPlaying={isPlaying} onPlayStateChanged={playStateChanged}/>
+      <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} />
 
     
     <div style={{ maxWidth: '600px', margin: '20px auto', padding: '20px' }}>
