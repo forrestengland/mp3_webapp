@@ -241,8 +241,6 @@ export default function AudioPlayer({ src }: AudioPlayerProps) {
     <>
 
       <div style={{ marginTop: '12px' }}>
-
-	<canvas ref={canvasRef} id="visualizer"></canvas>
 	
 	  <audio ref={audioRef} onEnded={playingEnded}
 	    onLoadedMetadata={metadataLoaded}
@@ -273,6 +271,8 @@ export default function AudioPlayer({ src }: AudioPlayerProps) {
         
         <span>{formatTime(duration)}</span>
       </div>
+
+      <canvas ref={canvasRef} id="visualizer"></canvas>
     </>
   );
 }

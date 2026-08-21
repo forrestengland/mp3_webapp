@@ -106,48 +106,52 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
 
     <>
 
-      <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} />
-
-    
-    <div style={{ maxWidth: '600px', margin: '20px auto', padding: '20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+      <div style={{display: 'flex'}}>
 	
-        <div>
-	  <h2>Available Tracks</h2>
-	</div>
-
+	<div id="song-list" style={{ maxWidth: '600px', margin: '20px auto', padding: '20px', flex: '1' }}>
 	
-    </div>
+	  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>	
+
+            <div>
+	      <h2>Available Tracks</h2>
+	    </div>
+
+	  </div>
 
 
       {songs.length === 0 ? (
         <p style={{ fontStyle: 'italic', color: '#666' }}>No songs uploaded yet.</p>
       ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
-	    {songs.map((song, index) => (
+	  {songs.map((song, index) => (
 
-	      <div className={index === playingIndex ? "song song-playing" : "song"} onClick={() => {songClicked(index)}} key={song.id} style={{ padding: '16px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '12px' }}>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-      <strong style={{ fontSize: '1.1em' }}>{song.song_name}</strong>
-      <span style={{ color: '#666', fontSize: '0.9em' }}>⏱ {song.duration}</span>
-    </div>
+	    <div className={index === playingIndex ? "song song-playing" : "song"} onClick={() => {songClicked(index)}} key={song.id} style={{ padding: '16px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '12px' }}>
+	      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+		<strong style={{ fontSize: '1.1em' }}>{song.song_name}</strong>
+		<span style={{ color: '#666', fontSize: '0.9em' }}>⏱ {song.duration}</span>
+	      </div>
     
     {song.description && (
       <p style={{ margin: '8px 0', color: '#444', fontSize: '0.95em' }}>{song.description}</p>
     )}
 
-    <small style={{ display: 'block', marginTop: '8px', color: '#888', fontSize: '0.8em' }}>
-      File: {song.filename}
-    </small>
+	      <small style={{ display: 'block', marginTop: '8px', color: '#888', fontSize: '0.8em' }}>
+													File: {song.filename}
+	      </small>
 
-		{isAuthenticated === true && <button onClick={() => {deleteClicked(song.id)}}>Delete</button>}
+	      {isAuthenticated === true && <button onClick={() => {deleteClicked(song.id)}}>Delete</button>}
 
-  </div>
+	    </div>
 ))}
         </div>
       )}
-    </div>
+      </div>
+
+	<div style={{flex: 1}}>
+	  <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} />
+	</div>
+      </div>
     </>
   );
 }
