@@ -248,7 +248,6 @@ export default function AudioPlayer({ src }: AudioPlayerProps) {
 	    onLoadedMetadata={metadataLoaded}
             onTimeUpdate={currentTimeChanged}
             style={{ width: '100%' }}
-	    controls
 	  >
              Your browser does not support the audio element.
 	  </audio>
