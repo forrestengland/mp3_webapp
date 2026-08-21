@@ -9,13 +9,69 @@ interface AudioPlayerProps {
 export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: AudioPlayerProps) {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // keep track of whether the user pressed play which means we can autoplay
   const [userPlayRequested, setUserPlayRequested] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
 
-  // const audioCtx = new AudioContext();
+  const audioContext = new AudioContext();
+  const analyserNode = audioContext.createAnalyser();
+  analyserNode.fftSize = 256;
+
+  const animate = () => {
+
+    if (!audioContext || !analyserNode) {
+      console.log("audioContext or analyserNode missing. can't draw the visualizer frame");
+      return;
+    }
+
+    console.log("drawing animation frame");
+
+    const canvas = canvasRef.current;
+    const ctx = canvasRef.current.getContext('2d');
+
+    // Set internal canvas dimensions to match its display size
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;    
+
+    const bufferLength = analyserNode.frequencyBinCount; // Equal to half of fftSize
+    const dataArray = new Uint8Array(bufferLength);    
+    
+    // 1. Clear the canvas for the new frame
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 2. Fetch the latest audio data
+    analyserNode.getByteFrequencyData(dataArray);
+
+    // 3. Calculate how wide each bar should be based on screen size
+    const barWidth = (canvas.width / bufferLength) * 1.5;
+    let barHeight;
+    let x = 0;
+
+  // 4. Loop through the audio data array and draw each bar
+    for (let i = 0; i < bufferLength; i++) {
+      // Value is 0-255. Normalize it to fit the canvas height.
+      const percent = dataArray[i] / 255;
+      barHeight = canvas.height * percent;
+
+      // Optional: Make bars change color based on their height/intensity
+      const r = barHeight + (25 * (i / bufferLength));
+      const g = 250 * (i / bufferLength);
+      const b = 50;
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+
+      // Draw the bar (x-coordinate, y-coordinate, width, height)
+      // Subtracting from canvas.height makes the bars grow from the bottom up
+      ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+
+      // Move to the next bar's starting position
+      x += barWidth;
+    }
+
+    requestAnimationFrame(animate);
+  };
 
   // update state when audio file metadata loads
   const metadataLoaded = () => {
@@ -53,8 +109,17 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
   const playClicked = () => {
     
     setUserPlayRequested(true);
+    
     audioRef.current.load(); // Forces the player to load the new track
     audioRef.current.play();
+
+    const sourceNode = audioContext.createMediaElementSource(audioRef.current);
+    // Connect the pipeline: Source -> Analyser -> Speakers (destination)
+    sourceNode.connect(analyserNode);
+    analyserNode.connect(audioContext.destination);
+
+    animate(); // start the visualizer
+    
     console.log('play clicked, playing');
   };
 
@@ -96,8 +161,6 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
       
 	audioRef.current.play().catch((err) => {
           console.log("Playback interrupted or blocked by browser when src changed:", err);
-	  // couldn't start playback - override play request
-	  //	if (onPlayStateChanged) onPlayStateChanged(false);
 	  console.log('load and start play failed');
 	  return;
 	});
@@ -109,25 +172,14 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
     } 
   }, [src]); // Triggers every time this state changes 
 
-  // start playing when requested - if user clicks the first song when the page first loads, blocked otherwise
-  // not used
-  /*  useEffect(() => {
-    if (audioRef.current && isPlaying) {
-      audioRef.current.load(); // Forces the player to load the new track
-      // TODO - this is called when the page loads, we shouldn't start to play on load
-      audioRef.current.play().catch((err) => {
-        console.log("Playback interrupted or blocked by browser when isPlaying changed:", err);
-	// couldn't start playback - override play request - doesn't work
-	//	if (onPlayStateChanged) onPlayStateChanged(false);
-      });
-    } 
-    }, [isPlaying]); // Triggers every time this state changes  */
-
   return (
 
     <>
 
-	<div style={{ marginTop: '12px' }}>
+      <div style={{ marginTop: '12px' }}>
+
+	<canvas ref={canvasRef} id="visualizer"></canvas>
+	
 	  <audio ref={audioRef} onEnded={playingEnded}
 	    onLoadedMetadata={metadataLoaded}
             onTimeUpdate={currentTimeChanged}
