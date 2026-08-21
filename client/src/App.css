@@ -190,3 +190,7 @@ nav a {
 .song-playing {
     background-color: #aaaaaa;
 }
+
+button {
+    margin: 10px;
+}

@@ -12,8 +12,39 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
 
   // keep track of whether the user pressed play which means we can autoplay
   const [userPlayRequested, setUserPlayRequested] = useState<boolean>(false);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
 
   // const audioCtx = new AudioContext();
+
+  // update state when audio file metadata loads
+  const metadataLoaded = () => {
+
+    if (!audioRef.current) return;
+
+    setDuration(audioRef.current.duration);
+    
+  };
+
+  const currentTimeChanged = () => {
+    if (!audioRef.current) return;
+    setCurrentTime(audioRef.current.currentTime);
+  };
+
+  const currentTimeSliderChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTime = parseFloat(e.target.value);
+    setCurrentTime(newTime);
+    if (audioRef.current) {
+      audioRef.current.currentTime = newTime;
+    }
+  };
+
+  const formatTime = (time: number) => {
+    if (isNaN(time)) return '0:00';
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
 
   const playingEnded = () => {
     onPlayStateChanged(false);
@@ -98,7 +129,8 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
 
 	<div style={{ marginTop: '12px' }}>
 	  <audio ref={audioRef} onEnded={playingEnded}
-            controls 
+	    onLoadedMetadata={metadataLoaded}
+            onTimeUpdate={currentTimeChanged}
             style={{ width: '100%' }}
 	  >
              Your browser does not support the audio element.
@@ -108,6 +140,22 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
       <div>
 	<button onClick={playClicked}>Play</button>
 	<button onClick={pauseClicked}>Pause</button>	
+      </div>
+
+      {/* Custom Slider */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <span>{formatTime(currentTime)}</span>
+        
+        <input
+          type="range"
+          min="0"
+          max={duration || 100} 
+          value={currentTime}
+          onChange={currentTimeSliderChanged}
+          style={{ flexGrow: 1 }}
+        />
+        
+        <span>{formatTime(duration)}</span>
       </div>
     </>
   );
