@@ -20,6 +20,8 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
   const analyserNode = audioContext.createAnalyser();
   analyserNode.fftSize = 256;
 
+  let sourceNode: MediaElementAudioSourceNode | null = null;
+
   const animate = () => {
 
     if (!audioContext || !analyserNode) {
@@ -121,14 +123,18 @@ export default function AudioPlayer({ src, isPlaying, onPlayStateChanged }: Audi
     setUserPlayRequested(true);
 
     if (audioRef.current) {
+      
       audioRef.current.load(); // Forces the player to load the new track
       audioRef.current.play();
 
-      const sourceNode = audioContext.createMediaElementSource(audioRef.current);
-      // Connect the pipeline: Source -> Analyser -> Speakers (destination)
-      sourceNode.connect(analyserNode);
-      analyserNode.connect(audioContext.destination);
-
+      // only connect the source node once?
+      if (!sourceNode) {
+	sourceNode = audioContext.createMediaElementSource(audioRef.current);
+	// Connect the pipeline: Source -> Analyser -> Speakers (destination)
+	sourceNode.connect(analyserNode);
+	analyserNode.connect(audioContext.destination);
+      }
+      
       animate(); // start the visualizer
     
       console.log('play clicked, playing and visualizing');
