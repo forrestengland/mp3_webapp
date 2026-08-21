@@ -107,7 +107,7 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
 
     <>
 
-      <AudioPlayer src={`/api/mp3/${songs[playingIndex].filename}`} isPlaying={isPlaying} onPlayStateChange={playStateChanged}/>
+      <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} isPlaying={isPlaying} onPlayStateChange={playStateChanged}/>
 
     
     <div style={{ maxWidth: '600px', margin: '20px auto', padding: '20px' }}>
