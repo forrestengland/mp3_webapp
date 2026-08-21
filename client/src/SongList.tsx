@@ -106,9 +106,14 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
 
     <>
 
-      <div style={{display: 'flex'}}>
+      <div >
+
+	<div >
+	  <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} />
+	</div>
 	
-	<div id="song-list" style={{ maxWidth: '600px', margin: '20px auto', padding: '20px', flex: '1' }}>
+	
+	<div id="song-list" style={{ maxWidth: '600px', margin: '20px auto', padding: '20px'}}>
 	
 	  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>	
 
@@ -146,12 +151,8 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
 ))}
         </div>
       )}
-      </div>
-
-	<div style={{flex: 1}}>
-	  <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} />
 	</div>
-      </div>
+	</div>
     </>
   );
 }
