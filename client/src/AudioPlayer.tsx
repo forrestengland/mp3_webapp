@@ -85,10 +85,16 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
 
     const bufferLength = analyserNode.frequencyBinCount; // Equal to half of fftSize
     const dataArray = new Uint8Array(bufferLength);    
-    
+
+    const scopeBufferLength = 64;
+    const scopeDataArray = new Uint8Array(scopeBufferLength);    
+
     // 1. Clear the canvas for the new frame
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#111";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // 2. Fetch the latest audio data
       analyserNode.getByteFrequencyData(dataArray);
@@ -118,6 +124,33 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
 	x += barWidth;
       }
     }
+
+    analyserNode.getByteTimeDomainData(scopeDataArray);
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#00ff88";
+    ctx.beginPath();
+
+    const sliceWidth = canvas.width / scopeBufferLength;
+    let x = 0;
+
+    for (let i = 0; i < scopeBufferLength; i++) {
+
+      const x = (i / (bufferLength - 1)) * canvas.width;
+      // Convert 0–255 into a vertical canvas position
+      const y = (scopeDataArray[i] / 255) * canvas.height;
+
+      if (i === 0) {
+	ctx.moveTo(x, y);
+      } else {
+	ctx.lineTo(x, y);
+      }
+
+      //      x += sliceWidth;
+    }
+
+    //    ctx.lineTo(canvas.width, canvas.height / 2);
+    ctx.stroke();    
 
     requestAnimationFrame(animate);
   };
