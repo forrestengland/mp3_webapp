@@ -127,9 +127,11 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
 
     analyserNode.getByteTimeDomainData(scopeDataArray);
 
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "#00ff88";
-    ctx.beginPath();
+    if (ctx) {
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#00ff88";
+      ctx.beginPath();
+    }
 
     const sliceWidth = canvas.width / scopeBufferLength;
     let x = 0;
@@ -141,16 +143,16 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
       const y = (scopeDataArray[i] / 255) * canvas.height;
 
       if (i === 0) {
-	ctx.moveTo(x, y);
+	ctx && ctx.moveTo(x, y);
       } else {
-	ctx.lineTo(x, y);
+	ctx && ctx.lineTo(x, y);
       }
 
       //      x += sliceWidth;
     }
 
     //    ctx.lineTo(canvas.width, canvas.height / 2);
-    ctx.stroke();    
+    ctx && ctx.stroke();    
 
     requestAnimationFrame(animate);
   };
