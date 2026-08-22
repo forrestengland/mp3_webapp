@@ -6,6 +6,7 @@ import SongUploadForm from './SongUploadForm'
 import SongList from './SongList'
 import LoginForm from './LoginForm'
 import Logout from './Logout'
+import Navigation from './Navigation'
 
 interface ApiResponse {
     message: string;
@@ -18,7 +19,7 @@ function App() {
 
     const [refreshTrigger, setRefreshTrigger] = useState<boolean>(false);
 
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
     const triggerRefresh = () => {
 	setRefreshTrigger(prev => !prev);
@@ -32,36 +33,31 @@ function App() {
 	setIsAuthenticated(false);
     }
 
-    // do something after page is rendered
-    useEffect(() => {
-	fetch('/api/data')
-	    .then((res) => res.json())
-	    .then((data: ApiResponse) => {
-		setData(data);
-		setLoading(false);
-	    }).catch((err) => {
-		console.error('Error fetching data:', err);
-		setLoading(false);
-	    })
-	
-    }, []);
+  // do something after page is rendered
+  useEffect(() => {
+    fetch('/api/data')
+      .then((res) => res.json())
+      .then((data: ApiResponse) => {
+	setData(data);
+	setLoading(false);
+      }).catch((err) => {
+	console.error('Error fetching data:', err);
+	setLoading(false);
+      });	
+  }, []);
 
     if (loading) return <p>Loading data from backend...</p>;
 
     return (
       <BrowserRouter>
 
-	<nav>
-	  <Link to="/">Songs</Link>
-	  {!isAuthenticated ? <Link to="/login">Login</Link> : <Link to="/logout">Logout</Link>}
-  	  {isAuthenticated && <Link to="/upload">Upload</Link>}
-	</nav>
+	<Navigation isAuthenticated={isAuthenticated} />
 
 	    <Routes>
 	      <Route path="/" element={<SongList refreshTrigger={refreshTrigger} isAuthenticated={isAuthenticated} />} />
-	    <Route path="/login" element={<LoginForm onLoginSuccess={onLogin}/>} />
-	    <Route path="/logout" element={<Logout onLogoutSuccess={onLogout}/>} />	    
-	    <Route path="/upload" element={<SongUploadForm onUploadSuccess={triggerRefresh}/>} />
+	      <Route path="/login" element={<LoginForm onLoginSuccess={onLogin}/>} />
+	      <Route path="/logout" element={<Logout onLogoutSuccess={onLogout}/>} />	    
+	      <Route path="/upload" element={<SongUploadForm onUploadSuccess={triggerRefresh}/>} />
 	    </Routes>
 	
 	    </BrowserRouter>

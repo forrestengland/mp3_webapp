@@ -53,18 +53,16 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
     //    setIsPlaying(true);
   };
 
-  /*  const playStateChanged = (state: boolean) => {
-    if (state)  {
-      //      setIsPlaying(true);
-      return; // only play the next song if the play state changed to stopped
-    }
+  const playingEnded = () => {
     if (!songs) return;
+    // auto play next track
+    console.log('playing ended, autoplaying next');
     if (playingIndex < songs.length - 1) {
       setPlayingIndex(playingIndex + 1);
     } else {
-      //      setIsPlaying(false);
+      console.log('no more songs to play, autoplay ended>');
     }
-    }; */
+  }; 
 
   const deleteClicked = async (id: number) => {
     try {
@@ -89,16 +87,6 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
     fetchSongs();
   }, [refreshTrigger]);
 
-  // play whenever playingIndex changes
-  /* useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.load(); // Forces the player to load the new track
-      audioRef.current.play().catch((err) => {
-        console.log("Playback interrupted or blocked by browser:", err);
-      });
-    } 
-    }, [playingIndex]); // Triggers every time this state changes */
-
   if (loading) return <p style={{ textAlign: 'center' }}>Loading tracks...</p>;
   if (error) return <p style={{ color: 'red', textAlign: 'center' }}>Error: {error}</p>;
 
@@ -109,7 +97,7 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
       <div >
 
 	<div >
-	  <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} />
+	  <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} onPlayingEnded={playingEnded} />
 	</div>
 	
 	

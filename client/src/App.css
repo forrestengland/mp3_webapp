@@ -195,3 +195,11 @@ button {
     margin: 10px;
     padding: 10px;
 }
+
+canvas {
+    border: 1px solid black;
+}
+
+a {
+    text-decoration: none;
+}

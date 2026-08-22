@@ -4,9 +4,10 @@ import React, { useEffect, useState, useRef } from 'react';
 
 interface AudioPlayerProps {
   src: string;
+  onPlayingEnded: () => void;
 }
 
-export default function AudioPlayer({ src }: AudioPlayerProps) {
+export default function AudioPlayer({ src, onPlayingEnded }: AudioPlayerProps) {
 
   const audioRef = useRef<HTMLMediaElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -149,7 +150,8 @@ export default function AudioPlayer({ src }: AudioPlayerProps) {
   };
 
   const playingEnded = () => {
-    //    onPlayStateChanged(false);
+    console.log('audio element finished playing, calling onPlayEnded');
+    onPlayingEnded();
   };
 
   const playClicked = () => {
