@@ -60,7 +60,35 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
     if (playingIndex < songs.length - 1) {
       setPlayingIndex(playingIndex + 1);
     } else {
-      console.log('no more songs to play, autoplay ended>');
+      console.log('no more songs to play, autoplay ended');
+    }
+  }; 
+
+  // function to call when previous is clicked in the AudioPlayer component
+  const previousClicked = () => {
+
+    if (!songs) return;
+    
+    console.log('playing previous track');
+    
+    if (playingIndex >= 1) {
+      setPlayingIndex(playingIndex - 1);
+    } else {
+      console.log('no previous song to play');
+    }
+  }; 
+
+  // function to call when next is clicked in the AudioPlayer component
+  const nextClicked = () => {
+
+    if (!songs) return;
+    
+    console.log('playing next track');
+    
+    if (playingIndex < songs.length - 1) {
+      setPlayingIndex(playingIndex + 1);
+    } else {
+      console.log('no next song to play');
     }
   }; 
 
@@ -97,7 +125,8 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
       <div >
 
 	<div >
-	  <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} onPlayingEnded={playingEnded} />
+	  <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} onPlayingEnded={playingEnded}
+	    onPreviousClicked={previousClicked} onNextClicked={nextClicked}/>
 	</div>
 	
 	

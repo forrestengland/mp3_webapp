@@ -5,9 +5,11 @@ import React, { useEffect, useState, useRef } from 'react';
 interface AudioPlayerProps {
   src: string;
   onPlayingEnded: () => void;
+  onPreviousClicked: () => void;
+  onNextClicked: () => void;
 }
 
-export default function AudioPlayer({ src, onPlayingEnded }: AudioPlayerProps) {
+export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, onNextClicked }: AudioPlayerProps) {
 
   const audioRef = useRef<HTMLMediaElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -180,20 +182,15 @@ export default function AudioPlayer({ src, onPlayingEnded }: AudioPlayerProps) {
     console.log('pause clicked');
   };
 
-  /*  useEffect(() => {
+  const previousClicked = () => {
+    console.log('previous clicked');
+    onPreviousClicked();
+  };
 
-    // set up the audio context once the page loads and the audio element is available
-    if (audioRef.current) {
-
-      console.log('elements loaded, creating audioContext');
-      
-      //  audioRef.current.load(); // Forces the player to load the new track
-      
-      //      audioRef.current.play();
-
-    }
-
-  }, []); */
+  const nextClicked = () => {
+    console.log('next clicked');
+    onNextClicked();
+  };
 
   // start playing when a new file is loaded
   // user has to start play manually?
@@ -255,7 +252,9 @@ export default function AudioPlayer({ src, onPlayingEnded }: AudioPlayerProps) {
 
       <div>
 	<button onClick={playClicked}>Play</button>
-	<button onClick={pauseClicked}>Pause</button>	
+	<button onClick={pauseClicked}>Pause</button>
+	<button onClick={previousClicked}>Previous</button>
+	<button onClick={nextClicked}>Next</button>		
       </div>
 
       {/* Custom Slider */}
