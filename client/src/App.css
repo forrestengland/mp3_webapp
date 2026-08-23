@@ -209,9 +209,20 @@ a {
     text-decoration: none;
 }
 
-nav {
+#navigation {
     background-color: #ddd;
-    text-align: right;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+#navigation div {
+    max-width: 1024px;
+}
+
+nav {
+    max-width: 1024px;
+    text-align: right
 }
 
 #song-list {
@@ -263,6 +274,9 @@ nav {
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   margin-top: -6px; /* Centers thumb vertically on the webkit track */
   transition: background 0.2s ease;
+  position: relative;
+  top: 4px;
+  
 }
 
 /* Firefox */
@@ -274,20 +288,26 @@ nav {
   border: 2px solid #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   transition: background 0.2s ease;
+  position: relative;
+  top: 4px;  
 }
 
 /* ==========================================
    4. Interaction States
    ========================================== */
 #audio-position-slider::-webkit-slider-thumb:hover {
-  background: #0056b3; /* Darker blue on hover */
+    background: #0056b3; /* Darker blue on hover */
 }
 
 #audio-position-slider::-moz-range-thumb:hover {
-  background: #0056b3;
+    background: #0056b3;
 }
 
 .audio-time {
     position: relative;
     top: -8px;
+}
+
+canvas {
+    width: 300px;
 }

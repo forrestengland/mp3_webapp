@@ -15,6 +15,8 @@ export default function Navigation({ isAuthenticated }: NavigationProps) {
 
   return (
     <>
+      <div id="navigation" >
+	<div>
       	<nav>
 	  {pathname !== '/' && <Link to="/">Songs</Link>}
 	  {!isAuthenticated ?
@@ -22,7 +24,8 @@ export default function Navigation({ isAuthenticated }: NavigationProps) {
 	    (pathname !== '/logout' && <Link to="/logout">Logout</Link>)}
   	  {isAuthenticated && pathname !== 'upload' && <Link to="/upload">Upload</Link>}
 	</nav>
-
+	</div>
+      </div>
     </>
   );
 }

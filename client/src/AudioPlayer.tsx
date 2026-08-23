@@ -59,6 +59,41 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
     });
   };
 
+  const drawVisualizerInit = () => {
+
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      console.log("canvasRef.current is null, can't draw visualizer frame");
+      return;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      console.log("canvas context is null, can't draw visualizer");
+    }
+
+    // 1. Clear the canvas for the new frame
+    if (ctx) {
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#111";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (ctx) {
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#00ff88";
+      ctx.beginPath();
+    }
+
+    ctx && ctx.moveTo(0, canvas.height / 2);
+    ctx && ctx.lineTo(canvas.width, canvas.height / 2);
+    ctx && ctx.stroke();    
+
+  };
+  
+
   const animate = () => {
 
     if (!audioContext || !analyserNode) {
@@ -224,6 +259,10 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
     console.log('next clicked');
     onNextClicked();
   };
+
+  useEffect(() => {
+    drawVisualizerInit();
+  }, []);
 
   // start playing when a new file is loaded
   // user has to start play manually?
