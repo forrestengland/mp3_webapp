@@ -292,9 +292,10 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
 
       {/* Custom Slider */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span>{formatTime(currentTime)}</span>
+        <span class="audio-time">{formatTime(currentTime)}</span>
         
         <input
+	  id="audio-position-slider"
           type="range"
           min="0"
           max={duration || 100} 
@@ -303,7 +304,7 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
           style={{ flexGrow: 1 }}
         />
         
-        <span>{formatTime(duration)}</span>
+        <span class="audio-time">{formatTime(duration)}</span>
       </div>
 
       <canvas ref={canvasRef} id="visualizer"></canvas>
