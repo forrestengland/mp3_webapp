@@ -194,13 +194,14 @@ nav a {
 button {
     margin: 10px;
     padding: 10px;
+    border-radius: 25px;
 }
 
 #visualizer {
     padding: 16px;
     border: 1px solid #ddd;
-    borderRadius: 6px;
-    marginBottom: 12px;
+    border-radius: 25px;
+    margin-bottom: 6px;
     height: 100px;
 }
 
