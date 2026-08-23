@@ -122,17 +122,23 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
 
     <>
 
-      <div >
-
-	<div >
-	  <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} onPlayingEnded={playingEnded}
-	    onPreviousClicked={previousClicked} onNextClicked={nextClicked}/>
-	</div>
-	
+      <div >	
 	
 	<div id="song-list" style={{ maxWidth: '600px', margin: '20px auto', padding: '20px'}}>
 	
-	  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>	
+	  <div style={{ display: 'block', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+
+	    <div>
+	      <h2>Audio Player</h2>
+	    </div>
+
+
+	    <div className="song" style={{ padding: '16px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '12px' }}>
+	        <div >
+		  <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} onPlayingEnded={playingEnded}
+		    onPreviousClicked={previousClicked} onNextClicked={nextClicked}/>
+		</div>
+	    </div>
 
             <div>
 	      <h2>Available Tracks</h2>

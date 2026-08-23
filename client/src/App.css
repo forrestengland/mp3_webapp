@@ -196,8 +196,12 @@ button {
     padding: 10px;
 }
 
-canvas {
-    border: 1px solid black;
+#visualizer {
+    padding: 16px;
+    border: 1px solid #ddd;
+    borderRadius: 6px;
+    marginBottom: 12px;
+    height: 100px;
 }
 
 a {

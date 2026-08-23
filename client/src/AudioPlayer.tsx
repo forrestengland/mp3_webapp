@@ -66,8 +66,6 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
       return;
     }
 
-    //    console.log("drawing animation frame");
-
     const canvas = canvasRef.current;
     if (!canvas) {
       console.log("canvasRef.current is null, can't draw visualizer frame");
@@ -80,8 +78,9 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
     }
 
     // Set internal canvas dimensions to match its display size
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;    
+    //    canvas.width = canvas.clientWidth;
+    //    canvas.height = canvas.clientHeight;
+
 
     const bufferLength = analyserNode.frequencyBinCount; // Equal to half of fftSize
     const dataArray = new Uint8Array(bufferLength);    
@@ -91,6 +90,7 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
 
     // 1. Clear the canvas for the new frame
     if (ctx) {
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       ctx.fillStyle = "#111";
@@ -148,10 +148,8 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
 	ctx && ctx.lineTo(x, y);
       }
 
-      //      x += sliceWidth;
     }
 
-    //    ctx.lineTo(canvas.width, canvas.height / 2);
     ctx && ctx.stroke();    
 
     requestAnimationFrame(animate);
