@@ -207,3 +207,17 @@ button {
 a {
     text-decoration: none;
 }
+
+nav {
+    background-color: #ddd;
+    text-align: right;
+}
+
+#song-list {
+    margin: 20px auto;
+    margin-top: 0px;
+}
+
+#song-list h2 {
+    text-align: left;
+}

@@ -132,7 +132,7 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
 
       <div >	
 	
-	<div id="song-list" style={{ maxWidth: '600px', margin: '20px auto', padding: '20px'}}>
+	<div id="song-list" style={{ maxWidth: '600px', padding: '20px'}}>
 	
 	  <div style={{ display: 'block', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
 
@@ -169,7 +169,7 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
 	      </div>
     
     {song.description && (
-      <p style={{ margin: '8px 0', color: '#444', fontSize: '0.95em' }}>{song.description}</p>
+      <p style={{ margin: '4px 0', color: '#444', fontSize: '0.95em' }}>{song.description}</p>
     )}
 
 	      <small style={{ display: 'block', marginTop: '8px', color: '#888', fontSize: '0.8em' }}>
