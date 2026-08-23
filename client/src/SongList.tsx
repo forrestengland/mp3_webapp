@@ -160,7 +160,7 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
-	  {songs.map((song, index) => (
+	  {songs.map((song, index) => (	    
 
 	    <div className={index === playingIndex ? "song song-playing" : "song"} onClick={() => {songClicked(index)}} key={song.id} style={{ padding: '16px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '12px' }}>
 	      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
@@ -173,7 +173,7 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
     )}
 
 	      <small style={{ display: 'block', marginTop: '8px', color: '#888', fontSize: '0.8em' }}>
-													File: {song.filename}
+													File: <a href={'/api/mp3/'+song.filename} download>{song.filename}</a>
 	      </small>
 
 	      {isAuthenticated === true && <button onClick={() => {editClicked(song.id)}}>Edit</button>}	      
