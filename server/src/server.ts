@@ -87,8 +87,57 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// get song info
+app.get('/api/song/:id', async(req: Request, res: Response): Promise<void> => {
+
+  try {
+    
+    const { id } = req.params;
+    
+    const sql = `select song_name,description from songs where id = $1`;
+    const values = [id];
+    const result = await query(sql, values);
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('upload handler error:', error);
+    res.status(500).json({ error: 'internal server error' });
+  }
+});
+
+// update song info
+app.post('/api/update', async(req: Request, res: Response): Promise<void> => {
+
+  if (!requireAuthentication(req)) {
+    res.status(400).json({ error: 'you are not logged in' });
+    return;
+  }
+
+  try {
+    
+    const { id, song_name, description } = req.body;
+    
+    const sql = `update songs set song_name = $1, description = $2 where id = $3`;
+    const values = [song_name, description, id];
+    const result = await query(sql, values);
+
+    res.status(201).json({
+      message: 'song update success',
+      success: true
+    });
+  } catch (error) {
+    console.error('upload handler error:', error);
+    res.status(500).json({ error: 'internal server error' });
+  }
+});
+
 // delete song
 app.post('/api/delete', async(req: Request, res: Response): Promise<void> => {
+
+  if (!requireAuthentication(req)) {
+    res.status(400).json({ error: 'you are not logged in' });
+    return;
+  }
 
   try {
     

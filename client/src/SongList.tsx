@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import AudioPlayer from './AudioPlayer'
 
@@ -23,6 +24,8 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
   const [error, setError] = useState<string>('');
   const [playingIndex, setPlayingIndex] = useState<number>(0);
   //  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const navigate = useNavigate();
 
   // Fetch songs from Express API
   const fetchSongs = async () => {
@@ -111,6 +114,11 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
     }    
   };
 
+  const editClicked = (id: number) => {
+    console.log(`edit clicked. id=${id}`);
+    navigate(`/edit/${id}`);
+  };
+
   useEffect(() => {
     fetchSongs();
   }, [refreshTrigger]);
@@ -168,6 +176,7 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
 													File: {song.filename}
 	      </small>
 
+	      {isAuthenticated === true && <button onClick={() => {editClicked(song.id)}}>Edit</button>}	      
 	      {isAuthenticated === true && <button onClick={() => {deleteClicked(song.id)}}>Delete</button>}
 
 	    </div>

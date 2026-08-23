@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 
 import './App.css'
 import SongUploadForm from './SongUploadForm'
+import SongEditForm from './SongEditForm'
 import SongList from './SongList'
 import LoginForm from './LoginForm'
 import Logout from './Logout'
@@ -55,6 +56,7 @@ function App() {
 
 	    <Routes>
 	      <Route path="/" element={<SongList refreshTrigger={refreshTrigger} isAuthenticated={isAuthenticated} />} />
+	      <Route path="/edit/:id" element={<SongEditForm isAuthenticated={isAuthenticated} />} />	      
 	      <Route path="/login" element={<LoginForm onLoginSuccess={onLogin}/>} />
 	      <Route path="/logout" element={<Logout onLogoutSuccess={onLogout}/>} />	    
 	      <Route path="/upload" element={<SongUploadForm onUploadSuccess={triggerRefresh}/>} />
