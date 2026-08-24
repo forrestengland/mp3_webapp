@@ -230,9 +230,20 @@ export default function AudioPlayer({ src, bgImage, onPlayingEnded, onPreviousCl
     setUserPlayRequested(true);
 
     if (audioRef.current) {
+      const position = audioRef.current.currentTime;
+      const wasPlaying = !audioRef.current.paused;
+      audioRef.current.addEventListener("loadedmetadata", async function restore() {
+
+	if (audioRef.current) audioRef.current.currentTime = position;
+
+	if (wasPlaying && audioRef.current) {
+	  await audioRef.current.play();
+	}
+      }, { once: true });
       audioRef.current.load();
       //      audioRef.current.play();
       playAudio();
+
     }
       
     animate(); // start the visualizer
@@ -331,7 +342,7 @@ export default function AudioPlayer({ src, bgImage, onPlayingEnded, onPreviousCl
 
       <div>
 	<button onClick={playClicked}>Play</button>
-	<button onClick={pauseClicked}>Stop</button>
+	<button onClick={pauseClicked}>Pause</button>
 	<button onClick={previousClicked}>Previous</button>
 	<button onClick={nextClicked}>Next</button>		
       </div>
