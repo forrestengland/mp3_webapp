@@ -273,9 +273,9 @@ nav {
   -webkit-appearance: none; /* Required to apply custom styles */
   appearance: none;
   height: 50px;
-  width: 5px;
-  background: #007bff; /* Main Theme Color */
-  border: 2px solid #fff;
+  width: 2px;
+  background: #000; /* Main Theme Color */
+/*  border: 2px solid #fff; */
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   margin-top: -6px; /* Centers thumb vertically on the webkit track */
   transition: background 0.2s ease;
