@@ -1,19 +1,32 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'
+
+import FileDrop from './FileDrop';
 
 interface SongUploadFormProps {
-    onUploadSuccess: () => void;
+  onUploadSuccess: () => void;
+  isAuthenticated: boolean;
 }
 
-export default function SongUploadForm({ onUploadSuccess }: SongUploadFormProps) {
+export default function SongUploadForm({ onUploadSuccess, isAuthenticated }: SongUploadFormProps) {
 
     const [songName, setSongName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   const [statusMessage, setStatusMessage] = useState<string>('');
+  const navigate = useNavigate();
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+  // make sure user is logged in or redirect
+  useEffect(() => {
+    if (!isAuthenticated) navigate('/');
+  }, []);
+
+
+  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (files: File[]) => {
+    if (files && files.length > 0) {
+      setFile(files[0]);
+      console.log('got dropped files: ', files);
     }
   };
 
@@ -73,13 +86,15 @@ export default function SongUploadForm({ onUploadSuccess }: SongUploadFormProps)
         <div style={{ marginBottom: '12px', display: 'flex', gap: '10px' }}>
         </div>
 
-        <div style={{ marginBottom: '16px' }}>
+	{/*        <div style={{ marginBottom: '16px' }}>
           <label style={{ display: 'block' }}>Audio File (.mp3, .wav):</label>
           <input type="file" accept="audio/*" onChange={handleFileChange} required />
-        </div>
+          </div> */}
+
+	<FileDrop onFilesChanged={handleFileChange} />
 
         <button type="submit" style={{ padding: '8px 16px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-          Upload Song
+	  Upload
         </button>
       </form>
 

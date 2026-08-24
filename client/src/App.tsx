@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 
-import './App.css'
-import SongUploadForm from './SongUploadForm'
-import SongEditForm from './SongEditForm'
-import SongList from './SongList'
-import LoginForm from './LoginForm'
-import Logout from './Logout'
-import Navigation from './Navigation'
+import './App.css';
+import SongUploadForm from './SongUploadForm';
+import SongEditForm from './SongEditForm';
+import SongList from './SongList';
+import LoginForm from './LoginForm';
+import Logout from './Logout';
+import Navigation from './Navigation';
 
 interface ApiResponse {
     message: string;
@@ -36,6 +36,7 @@ function App() {
 
   // do something after page is rendered
   useEffect(() => {
+    
     fetch('/api/data')
       .then((res) => res.json())
       .then((data: ApiResponse) => {
@@ -44,7 +45,8 @@ function App() {
       }).catch((err) => {
 	console.error('Error fetching data:', err);
 	setLoading(false);
-      });	
+      });
+    
   }, []);
 
     if (loading) return <p>Loading data from backend...</p>;
@@ -59,7 +61,7 @@ function App() {
 	      <Route path="/edit/:id" element={<SongEditForm isAuthenticated={isAuthenticated} />} />	      
 	      <Route path="/login" element={<LoginForm onLoginSuccess={onLogin}/>} />
 	      <Route path="/logout" element={<Logout onLogoutSuccess={onLogout}/>} />	    
-	      <Route path="/upload" element={<SongUploadForm onUploadSuccess={triggerRefresh}/>} />
+	      <Route path="/upload" element={<SongUploadForm onUploadSuccess={triggerRefresh} isAuthenticated={isAuthenticated}/>} />
 	    </Routes>
 	
 	    </BrowserRouter>
