@@ -316,3 +316,11 @@ canvas {
     width: 300px;
     border: 1px solid #ddd;
 }
+
+#player-container {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: #fff;
+}
