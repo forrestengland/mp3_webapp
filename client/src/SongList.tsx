@@ -10,6 +10,7 @@ interface Song {
   description: string;
   duration: string;
   filename: string;
+  image: string;
 }
 
 interface SongListProps {
@@ -175,6 +176,8 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
 	      <small style={{ display: 'block', marginTop: '8px', color: '#888', fontSize: '0.8em' }}>
 													File: <a href={'/api/mp3/'+song.filename} download>{song.filename}</a>
 	      </small>
+
+	      {song.image && <img className="waveform" src={`data:image/png;base64,${song.image}`} />}
 
 	      {isAuthenticated === true && <button onClick={() => {editClicked(song.id)}}>Edit</button>}	      
 	      {isAuthenticated === true && <button onClick={() => {deleteClicked(song.id)}}>Delete</button>}

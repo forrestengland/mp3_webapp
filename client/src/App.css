@@ -311,3 +311,8 @@ nav {
 canvas {
     width: 300px;
 }
+
+.waveform {
+    width: 300px;
+    border: 1px solid #ddd;
+}
