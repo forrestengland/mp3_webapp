@@ -234,13 +234,17 @@ nav {
     text-align: left;
 }
 
+#slider-container {
+    margin: 0 auto 15px auto;
+}
+
 #audio-position-slider {
     -webkit-appearance: none;
     appearance: none;
-    width: 100%;
+    width: 300px;
     background: transparent;
     cursor: pointer;
-    margin-bottom: 15px;
+
 }
 
 #audio-position-slider:focus {
@@ -303,9 +307,12 @@ nav {
     background: #0056b3;
 }
 
-.audio-time {
-    position: relative;
-    top: -8px;
+.audio-time-left {
+    margin: auto 0 auto auto;    
+}
+
+.audio-time-right {
+    margin: auto auto auto 0;
 }
 
 canvas {
@@ -324,4 +331,6 @@ canvas {
     z-index: 1000;
     background-color: #fff;
     border: 1px solid #ddd;
+    max-width: 600px;
+    margin: 0 auto;
 }

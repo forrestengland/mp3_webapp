@@ -348,8 +348,8 @@ export default function AudioPlayer({ src, bgImage, onPlayingEnded, onPreviousCl
       </div>
 
       {/* Custom Slider */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span className="audio-time">{formatTime(currentTime)}</span>
+      <div id="slider-container" style={{ display: 'flex', alignItems: 'center', gap: '0px' }}>
+        <span className="audio-time-left">{formatTime(currentTime)}</span>
         
         <input
 	  ref={sliderRef}
@@ -359,10 +359,9 @@ export default function AudioPlayer({ src, bgImage, onPlayingEnded, onPreviousCl
           max={duration || 100} 
           value={currentTime}
           onChange={currentTimeSliderChanged}
-          style={{ flexGrow: 1 }}
         />
         
-        <span className="audio-time">{formatTime(duration)}</span>
+        <span className="audio-time-right">{formatTime(duration)}</span>
       </div>
 
       <canvas ref={canvasRef} id="visualizer"></canvas>
