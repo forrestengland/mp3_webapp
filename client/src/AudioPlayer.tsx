@@ -52,7 +52,6 @@ export default function AudioPlayer({ src, bgImage, onPlayingEnded, onPreviousCl
       console.log('analyser already created, skipping');
     }
 
-    //    audioContext.resume();
     audioRef.current && audioRef.current.load();
     audioRef.current && audioRef.current.play().catch((err) => {
       console.log("Playback interrupted or blocked by browser when src changed:", err);
