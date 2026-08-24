@@ -4,15 +4,17 @@ import React, { useEffect, useState, useRef } from 'react';
 
 interface AudioPlayerProps {
   src: string;
+  bgImage: string;
   onPlayingEnded: () => void;
   onPreviousClicked: () => void;
   onNextClicked: () => void;
 }
 
-export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, onNextClicked }: AudioPlayerProps) {
+export default function AudioPlayer({ src, bgImage, onPlayingEnded, onPreviousClicked, onNextClicked }: AudioPlayerProps) {
 
   const audioRef = useRef<HTMLMediaElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const sliderRef = useRef<HTMLInputElement | null>(null);
 
   // keep track of whether the user pressed play which means we can autoplay
   const [userPlayRequested, setUserPlayRequested] = useState<boolean>(false);
@@ -264,6 +266,10 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
     drawVisualizerInit();
   }, []);
 
+  useEffect(() => {
+    sliderRef.current.style.setProperty('--track-bg', `url('${bgImage}')`);
+  }, [bgImage]);
+
   // start playing when a new file is loaded
   // user has to start play manually?
   useEffect(() => {
@@ -284,6 +290,8 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
       console.log('new src set, attempting to load');
 
       audioRef.current.src = src;
+
+      sliderRef.current.style.setProperty('--track-bg', `url('${bgImage}')`);
 
       audioRef.current.load(); // Forces the player to load the new track
 
@@ -324,7 +332,7 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
 
       <div>
 	<button onClick={playClicked}>Play</button>
-	<button onClick={pauseClicked}>Pause</button>
+	<button onClick={pauseClicked}>Stop</button>
 	<button onClick={previousClicked}>Previous</button>
 	<button onClick={nextClicked}>Next</button>		
       </div>
@@ -334,6 +342,7 @@ export default function AudioPlayer({ src, onPlayingEnded, onPreviousClicked, on
         <span className="audio-time">{formatTime(currentTime)}</span>
         
         <input
+	  ref={sliderRef}
 	  id="audio-position-slider"
           type="range"
           min="0"

@@ -24,6 +24,7 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [playingIndex, setPlayingIndex] = useState<number>(0);
+  const [bgImage, setBgImage] = useState<string>('');
   //  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
       //      setIsPlaying(true);
     } else {
       setPlayingIndex(index);
+      updateImage(index);
       //      if (audioRef.current) audioRef.current.src = '/api/mp3/'+songs[playingIndex].filename;
     }
     //    setIsPlaying(true);
@@ -63,6 +65,7 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
     console.log('playing ended, autoplaying next');
     if (playingIndex < songs.length - 1) {
       setPlayingIndex(playingIndex + 1);
+      updateImage(playingIndex + 1);
     } else {
       console.log('no more songs to play, autoplay ended');
     }
@@ -75,8 +78,9 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
     
     console.log('playing previous track');
     
-    if (playingIndex >= 1) {
+    if (playingIndex >= 1) {      
       setPlayingIndex(playingIndex - 1);
+      updateImage(playingIndex - 1);
     } else {
       console.log('no previous song to play');
     }
@@ -91,6 +95,7 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
     
     if (playingIndex < songs.length - 1) {
       setPlayingIndex(playingIndex + 1);
+      updateImage(playingIndex + 1);
     } else {
       console.log('no next song to play');
     }
@@ -120,9 +125,29 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
     navigate(`/edit/${id}`);
   };
 
+  const updateImage = (index: number) => {
+    const song = songs[index];
+    if (song) {
+      const newBgImage = `data:image/png;base64,${song.image}`;
+      setBgImage(newBgImage);
+    }
+  }
+
   useEffect(() => {
     fetchSongs();
   }, [refreshTrigger]);
+
+  useEffect(() => {
+    updateImage(0); // update slider track to the first track's waveform
+  }, [songs]);
+
+  /*  useEffect(() => {
+    const song = songs[playingIndex];
+    if (song) {
+      const newBgImage = `data:image/png;base64,${song.image}`;
+      setBgImage(newBgImage);
+    }
+    }, [playingIndex]); */
 
   if (loading) return <p style={{ textAlign: 'center' }}>Loading tracks...</p>;
   if (error) return <p style={{ color: 'red', textAlign: 'center' }}>Error: {error}</p>;
@@ -144,7 +169,8 @@ export default function SongList({ refreshTrigger, isAuthenticated }: SongListPr
 
 	    <div className="song" style={{ padding: '16px', border: '1px solid #ddd', borderRadius: '6px', marginBottom: '12px' }}>
 	        <div >
-		  <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`} onPlayingEnded={playingEnded}
+		  <AudioPlayer src={`${window.location.origin}/api/mp3/${songs[playingIndex].filename}`}
+		    bgImage={bgImage} onPlayingEnded={playingEnded}
 		    onPreviousClicked={previousClicked} onNextClicked={nextClicked}/>
 		</div>
 	    </div>
