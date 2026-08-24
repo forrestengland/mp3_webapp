@@ -270,7 +270,6 @@ nav {
   appearance: none;
   height: 50px;
   width: 5px;
-//  border-radius: 25%;
   background: #007bff; /* Main Theme Color */
   border: 2px solid #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -285,7 +284,6 @@ nav {
 #audio-position-slider::-moz-range-thumb {
   height: 50px;
   width: 5px;
-//  border-radius: 25%;
   background: #007bff;
   border: 2px solid #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);

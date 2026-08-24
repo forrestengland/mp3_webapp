@@ -267,7 +267,7 @@ export default function AudioPlayer({ src, bgImage, onPlayingEnded, onPreviousCl
   }, []);
 
   useEffect(() => {
-    sliderRef.current.style.setProperty('--track-bg', `url('${bgImage}')`);
+    sliderRef.current && sliderRef.current.style.setProperty('--track-bg', `url('${bgImage}')`);
   }, [bgImage]);
 
   // start playing when a new file is loaded
@@ -291,7 +291,7 @@ export default function AudioPlayer({ src, bgImage, onPlayingEnded, onPreviousCl
 
       audioRef.current.src = src;
 
-      sliderRef.current.style.setProperty('--track-bg', `url('${bgImage}')`);
+      //      sliderRef.current.style.setProperty('--track-bg', `url('${bgImage}')`);
 
       audioRef.current.load(); // Forces the player to load the new track
 
